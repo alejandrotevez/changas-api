@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "changas-api"
+version = "0.1.0"
+description = "Changas backend API — Clean Architecture"
+requires-python = ">=3.12"
+authors = [{ name = "Changas Team" }]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+asyncio_mode = "strict"
+markers = [
+    "unit: Unit tests (no IO)",
+    "integration: Integration tests (DB + API)",
+    "api: Full API end-to-end tests",
+]
