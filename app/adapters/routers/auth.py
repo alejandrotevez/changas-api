@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import dataclasses
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.adapters.middleware.auth import get_current_user
@@ -17,6 +17,7 @@ from app.adapters.schemas.auth import (
 from app.domain.entities import Usuario
 from app.domain.exceptions import AuthenticationError
 from app.framework.database import get_db
+from app.limiter import limiter
 from app.usecases.auth import LoginUseCase, TokenService
 
 router = APIRouter(tags=["auth"])
@@ -35,7 +36,9 @@ def _get_login_use_case(db: AsyncSession = Depends(get_db)) -> LoginUseCase:
     response_model=LoginResponse,
     status_code=status.HTTP_200_OK,
 )
+@limiter.limit("10/minute")
 async def login_email(
+    request: Request,
     body: LoginRequest,
     use_case: LoginUseCase = Depends(_get_login_use_case),
 ) -> LoginResponse:
@@ -58,7 +61,9 @@ async def login_email(
     response_model=LoginResponse,
     status_code=status.HTTP_200_OK,
 )
+@limiter.limit("10/minute")
 async def login_google(
+    request: Request,
     body: GoogleLoginRequest,
     use_case: LoginUseCase = Depends(_get_login_use_case),
 ) -> LoginResponse:

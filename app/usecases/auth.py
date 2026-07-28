@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 import uuid
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
@@ -13,6 +14,8 @@ from app.config import Settings, settings
 from app.domain.entities import Usuario
 from app.domain.exceptions import AuthenticationError
 from app.domain.interfaces import UserRepository
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
@@ -73,8 +76,12 @@ class LoginUseCase:
         user = await self._user_repo.get_by_email(email)
 
         if user is None or not user.password_hash:
-            # Use the same generic error for unknown email AND wrong password
-            # to avoid leaking whether the email is registered.
+            # Constant-time dummy check to prevent timing-based user enumeration.
+            # Always call checkpw regardless of whether the user exists.
+            _bcrypt.checkpw(
+                password.encode(),
+                b"$2b$12$2Nt0XI8aeboPRX6po0rE7enR8B26T/YXuTtlIcKBvnD38yiVhOb4m",
+            )
             raise AuthenticationError("Invalid email or password")
 
         if not _bcrypt.checkpw(password.encode(), user.password_hash.encode()):
@@ -94,7 +101,8 @@ class LoginUseCase:
                 settings.GOOGLE_CLIENT_ID,
             )
         except ValueError as exc:
-            raise AuthenticationError(f"Invalid Google id token: {exc}") from exc
+            logger.warning("Google token verification failed", exc_info=True)
+            raise AuthenticationError("Invalid Google id token") from exc
 
         google_id = info.get("sub")
         email = info.get("email")

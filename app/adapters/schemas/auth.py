@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Optional
+from typing import Literal, Optional
 
 from pydantic import BaseModel, ConfigDict
 
@@ -54,7 +54,7 @@ class LoginResponse(BaseModel):
 
 
 class UpdateUserRequest(BaseModel):
-    rol_actual: Optional[str] = None
+    rol_actual: Optional[Literal["CLIENTE", "CHANGADOR"]] = None
     tags: Optional[list[str]] = None
 
     model_config = ConfigDict(

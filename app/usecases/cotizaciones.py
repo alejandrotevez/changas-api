@@ -114,6 +114,9 @@ class CotizacionUseCase:
         if cotizacion is None:
             raise NotFound(entity="Cotizacion", id=cotizacion_id)
 
+        if cotizacion.match_id != match_id:
+            raise NotFound(entity="Cotizacion", id=cotizacion_id)
+
         if cotizacion.estado != "PENDIENTE":
             raise InvalidTransition(
                 entity="Cotizacion",
