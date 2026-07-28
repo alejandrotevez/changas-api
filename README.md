@@ -70,6 +70,7 @@ El servidor queda en `http://localhost:8000`. Los endpoints están bajo `/v1/`.
 | GET | `/v1/matches` | Listar matches |
 | GET | `/v1/matches/{id}/messages` | Mensajes de un match |
 | POST | `/v1/matches/{id}/messages` | Enviar mensaje |
+| GET | `/v1/health` | Health check |
 | POST | `/v1/matches/{id}/cotizaciones` | Crear cotización (changador) |
 | PATCH | `/v1/matches/{id}/cotizaciones/{id}/accept` | Aceptar cotización (cliente) |
 | PATCH | `/v1/matches/{id}/cotizaciones/{id}/reject` | Rechazar cotización (cliente) |

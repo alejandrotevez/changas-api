@@ -45,6 +45,12 @@ def create_app(settings_override: Optional[Settings] = None) -> FastAPI:
     app.include_router(chat.router, prefix="/v1")
     app.include_router(cotizaciones.router, prefix="/v1")
 
+    @app.get("/v1/health", tags=["health"])
+    async def health():
+        return {"status": "ok", "version": "0.1.0"}
+
+    return app
+
     return app
 
 
